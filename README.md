@@ -24,8 +24,13 @@ To test that each model is correctly specified, I execute a very short test run 
 
 models made (still need to be checked):
 
-1 - noMK3
-2 - MallAsymK3
+1. noMK3
+2. AncMK3
+3. MallAsymK3
+4. AncMintK3
+5. SecK3
+6. SecIntK3
+7. AncMCoInK3
 
 
-
+- Need to check that the number of migration matrices are correct in all
