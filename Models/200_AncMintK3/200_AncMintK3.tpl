@@ -5,15 +5,15 @@ NPOP0$
 NPOP1$
 NPOP2$
 //Samples sizes and samples age 
-48
+8
 14
-10
+22
 //Growth rates: negative growth implies population expansion
 0
 0
 0
 //Number of migration matrices : 0 implies no migration between demes
-3
+2
 //Migration matrix 0
 0 0 0
 0 0 0
@@ -22,15 +22,11 @@ NPOP2$
 0 0 0
 0 0 MIG21$
 0 MIG12$ 0
-//Migration matrix 2
-0 0 MIG120$
-0 0 0
-MIG012$ 0 0
 //historical event: time, source, sink, migrants, new deme size, growth rate, migr mat index
-2 historical event
+3 historical event
 TMIG$ 0 0 0 1 0 1
-TDIV1$ 1 2 1 RESIZE_1$ 0 2
-1470000 2 0 1 RESIZE_2$ 0 2
+TDIV1$ 1 2 1 RESIZE_1$ 0 0
+1111 2 0 1 RESIZE_2$ 0 0
 //Number of independent loci [chromosome] 
 1 0
 //Per chromosome: Number of contiguous linkage Block: a block is a set of contiguous loci
