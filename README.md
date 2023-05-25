@@ -58,7 +58,7 @@ models made (Xs have been checked):
 4. 20_AncMintK3 - X
 5. 20_SecK3 - X
 6. 20_SecIntK3 - X
-7. 20_AncMCoInK3 - 
+7. 20_AncMCoInK3 - X
 
 200k div time:
 1. 200_noMK3 -
