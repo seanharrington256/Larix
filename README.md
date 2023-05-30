@@ -59,7 +59,6 @@ Check that it looks right - don't worry about parameter estimates, it didn't run
 
 
 
-- FSC 2.6.0.3
 - edit sample sizes
 - check that all params exist match up in the est file
 
