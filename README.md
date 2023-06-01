@@ -53,9 +53,10 @@ Check that it looks right - don't worry about parameter estimates, it didn't run
 
 5. Submit all of the jobs to the cluster as a big job array on a SLURM cluster using `FSC_Larix_Mods.slurm`.
 
+Hunting down failed runs:
+`grep CANCELLED *Larix_7145250*  | cut -d "_" -f 5 | cut -d "." -f 1 | sort > failed2_fsc.txt`
 
-
-
+`grep 'Bad parameters'  *.err` This was only one, and also contains "CANCELLED", don't need to get this separately.
 
 
 
