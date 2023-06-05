@@ -58,7 +58,7 @@ Check that it looks right - don't worry about parameter estimates, it didn't run
 
 7. Convert the parameter estimates into useful units (e.g., years, number of migrants per generation, etc.) -- I still don't have a fully automated solution for this, so has to be done on an ad hoc basis depending on what parameters are included, etc. `Par_conv_FSC_Larix.R` will do these conversions here - see comments in the script for more info. This script will also start some prep for parametric bootstrap estimation of confidence intervals around parameter estimates.
 
-
+* NOTE: I think there are other times that aren't being converted - times for when ancient migration ends, possibly others
 
 
 
