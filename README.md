@@ -75,6 +75,7 @@ Hunting down failed runs:
 # just notes to me:
 
 models made (Xs have been checked):
+numbers correspond to numbers in Dan's diagram
 
 20k div time:
 1. 20_noMK3 - X
@@ -93,12 +94,18 @@ models made (Xs have been checked):
 5. 200_SecK3 - X
 6. 200_SecIntK3 - X
 7. 200_AncMCoInK3 - X
-16. 200_secLGMintK3 
+16. 200_secLGMintK3 - X
+
+200k div time with population resize (expecting expansion)added in:
+200_AncMCoInExpK3 - 200_AncMCoInK3 with population resize parameter added in - X
+200_MallAsymExpK3 - 200_MallAsymK3 with population resize parameter added in - X
+200_noMExpK3 - 200_noMK3 with population resize parameter added in - X
+200_SecExpK3 - 200_SecK3 with population resize parameter added in - X
 
 
-- add in model 16
 
-- fit these models, then add in models that incorporate population size change
+
+
 
 
 - use `4LAR_no_outgroups.recode_dp07mis07.recode.vcf`
