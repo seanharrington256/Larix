@@ -8,8 +8,8 @@
 #SBATCH --mem-per-cpu=1G
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=seanharrington256@gmail.com
-#SBATCH -e err_FSC_Larix_boot_%A_%a.err
-#SBATCH -o std_FSC_Larix_boot_%A_%a.out
+#SBATCH -e boot_err_outs/err_FSC_Larix_boot_%A_%a.err
+#SBATCH -o boot_err_outs/std_FSC_Larix_boot_%A_%a.out
 #SBATCH --array=1-5000
 
 
