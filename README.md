@@ -58,7 +58,13 @@ Check that it looks right - don't worry about parameter estimates, it didn't run
 
 7. Convert the parameter estimates into useful units (e.g., years, number of migrants per generation, etc.) -- I still don't have a fully automated solution for this, so has to be done on an ad hoc basis depending on what parameters are included, etc. `Par_conv_FSC_Larix.R` will do these conversions here - see comments in the script for more info. This script will also start some prep for parametric bootstrap estimation of confidence intervals around parameter estimates.
 
-* NOTE: I think there are other times that aren't being converted - times for when ancient migration ends, possibly others
+8. Prep parametric bootstrap replicates. `Par_conv_FSC_Larix.R` from previous step generates input for bootstraps. Copy that directory to the cluster. Go into the directory that contains each of the 100 bootstrap reps to be executed and run `Prep_FSC_reps_of_bootreps.sh` to generate 50 fsc replicates of each bootstrap replicate. This is because we want to run 50 independent FSC searches for the best likelihood for each of the 100 bootstrap replicates. Use `FSC_Larix_boot.slurm `to run this for the best model.
+
+
+
+
+
+## NOTE: I think there are other times that aren't being converted - times for when ancient migration ends, possibly others - need to find these 
 
 
 

@@ -20,8 +20,19 @@ library(stringr)
 gen_time <- 180
 
 
-##### set up directories here
+##### set up directories/files here
 bestlhoods_dir <- "~/Active_Research/Larix_data_and_outs/FSC_out"
+boot_in_dir <- "~/Active_Research/Larix_data_and_outs/boot_inputs" # directory where we will create input files to run bootstraps
+sfs_file <- "~/Active_Research/Larix_data_and_outs/SFS/fastsimcoal2/LarK3_MSFS.obs" # directory of SFS input for original modeling
+
+# Files from the bestrun of the best model
+bestrun_dir <- "~/Active_Research/Larix_data_and_outs/200_MallAsymK3_bestrun"
+
+maxLfile <- list.files(path = bestrun_dir, pattern = "maxL.par$", full.names = TRUE)
+pv_to_copy <- list.files(path = bestrun_dir, pattern = ".pv$", full.names = TRUE)
+est_to_copy <- list.files(path = bestrun_dir, pattern = ".est$", full.names = TRUE)
+tpl_to_copy <- list.files(path = bestrun_dir, pattern = ".tpl$", full.names = TRUE)
+
 
 # name the output file for converted parameter estimates
 out_ests <- "Larix_pars_conv.csv"
@@ -220,47 +231,40 @@ write.csv(vals_and_AIC, paste0(out_ests))
 # ########################################################################################################################
 # ######   Set up bootstrapping                                                                                   ########
 # ########################################################################################################################
-#   
-## set up files for parametric bootstrapping
-# set up an object with the location of bootstrap input stuff (i.e., stuff that will be used as input for bootstrap analyses)
-boot_in_dir<-"/Users/harrington/Active_Research/Ecotone_genomics/GBS_Data/FSC/boot_input"
-## find out the number of SNPs in the input empirical joint SFS
-# Set the working directory to where the SFS that we used is - using for K=3 here
-setwd("/Users/harrington/Active_Research/Ecotone_genomics/GBS_Data/FSC/SFS/Lgetula_p123_v2_25miss_K3_SFS/fastsimcoal2")
+
 
 # # read in the SFS file
-SFS_all<-readLines("Lgetula_p123_v2_25miss_MSFS.obs")
-# remove the first couple lines, this is just header stuff
+SFS_all<-readLines(sfs_file)
+# get just the line with the actual SFS numbers
 SFS<-SFS_all[3]
 # split each line into numbers
 SFS_nums<-strsplit(SFS, split=" ")
 # sum these numbers to find the total number of SNPs - note this includes monomorphics
 num_SNPs<-round(sum(as.numeric(SFS_nums[[1]])), 0)
-### This SFS has 13784 SNPs -- again, note that this includes monomorphics
+### This SFS has 1577 SNPs -- again, note that this includes monomorphics
 
  
 # read in each maxL_file change number of independent loci to the number of SNPs to make it ready for bootstrapping, write to where the bootstraps are
 # Commented out block below loops this for multiple models, here, I have strong support for a single model, so only going to boot that one model
-maxLfile<-"/Users/harrington/Active_Research/Ecotone_genomics/GBS_Data/FSC/Clust_out_best_runs/fix_root_time/K3/HistSecRecResizeK3_bestrun/HistSecRecResizeK3_maxL.par"
-par_to_edit<-readLines(maxLfile) # read in the file
-line_to_edit<-grep("Number of independent loci",par_to_edit)+1 # get the line number for the header, then add 1 to get the line we actually want to edit
-par_to_edit[line_to_edit]<-gsub("1 0", paste(num_SNPs ,0), par_to_edit[line_to_edit]) # edit in the number of SNPs
-freqline_to_edit<-grep("per Block:data type",par_to_edit)+1 # edit freq to DNA so that SFS will be simulated - start with finding line to edit again
-par_to_edit[freqline_to_edit]<-gsub("FREQ", "DNA", par_to_edit[freqline_to_edit])
+par_to_edit <- readLines(maxLfile) # read in the file
+line_to_edit <- grep("Number of independent loci",par_to_edit)+1 # get the line number for the header, then add 1 to get the line we actually want to edit
+par_to_edit[line_to_edit] <- gsub("1 0", paste(num_SNPs ,0), par_to_edit[line_to_edit]) # edit in the number of SNPs
+freqline_to_edit <- grep("per Block:data type",par_to_edit)+1 # edit freq to DNA so that SFS will be simulated - start with finding line to edit again
+par_to_edit[freqline_to_edit] <- gsub("FREQ", "DNA", par_to_edit[freqline_to_edit])
 setwd(boot_in_dir)
 writeLines(par_to_edit, basename(maxLfile)) # write this out to the new file
 
 ################################################################################################
 ## Then go use FSC to generate the bootstrap reps. Run the following commands in terminal:
 ################################################################################################
-#$ cd /Users/harrington/Active_Research/Ecotone_genomics/GBS_Data/FSC/boot_input
-#$ fsc26 fsc26 -i HistSecRecResizeK3_maxL.par -n100 -j -m -s0 -x –I -q -u
+#$ cd /Users/harrington/Active_Research/Larix_data_and_outs/boot_inputs
+#$ fsc26 -i 200_MallAsymK3_maxL.par -n100 -j -m -s0 -x –I -q -u
 ################################################################################################
 
 
 
 
-### This is the old loop:
+### This is the old loop - untested recently:
 # setwd(mods)  # set the working directory to where the models are
 # # loop over the maxL_files to make the necessary edit
 # for(i in 1:length(maxL_files)){
@@ -275,12 +279,8 @@ writeLines(par_to_edit, basename(maxLfile)) # write this out to the new file
 
 
 
-## Set up the files that need to be copied into the boot_in_dir
-pv_to_copy<-"/Users/harrington/Active_Research/Ecotone_genomics/GBS_Data/FSC/Clust_out_best_runs/fix_root_time/K3/HistSecRecResizeK3_bestrun/HistSecRecResizeK3.pv"
-est_to_copy<-"/Users/harrington/Active_Research/Ecotone_genomics/GBS_Data/FSC/Clust_out_best_runs/fix_root_time/K3/HistSecRecResizeK3_bestrun/HistSecRecResizeK3.est"
-tpl_to_copy<-"/Users/harrington/Active_Research/Ecotone_genomics/GBS_Data/FSC/Clust_out_best_runs/fix_root_time/K3/HistSecRecResizeK3_bestrun/HistSecRecResizeK3.tpl"
-
-file.copy(c(pv_to_copy, est_to_copy, tpl_to_copy), boot_in_dir) 
+## Copy necessary files into boot_in_dir
+file.copy(c(pv_to_copy, est_to_copy, tpl_to_copy), boot_in_dir)
 
 
 
