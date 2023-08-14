@@ -60,7 +60,7 @@ Check that it looks right - don't worry about parameter estimates, it didn't run
 
 8. Prep parametric bootstrap replicates. `Par_conv_FSC_Larix.R` from previous step generates input for bootstraps. Copy that directory to the cluster. Go into the directory that contains each of the 100 bootstrap reps to be executed and run `Prep_FSC_reps_of_bootreps.sh` to generate 50 fsc replicates of each bootstrap replicate. This is because we want to run 50 independent FSC searches for the best likelihood for each of the 100 bootstrap replicates. The replicates are created in a new directory in the parent of the current directory. Use `FSC_Larix_boot.slurm `to run FSC on these reps.
 
-
+9. Summarize bootstrap replicates. For each bootstrap replicate, need to get the best of the runs, pull the bestlhoods file out, and then summarize these all together. `Get_best_FSCacross_boots.sh` will get the best run within each bootstrap rep - this should be run from within the `Reps` directory for the bootstraps. Run the R script `Get_Larix_pars_across_bootreps.R` on files in the `best_L_allMods` directory created by the previous script.
 
 
 
