@@ -29,6 +29,8 @@ plots_out_dir <- "~/Active_Research/Larix_data_and_outs/Boot_summaries"
 # load in the best estimates from the empirical data
 point_ests_all <- read.csv("~/Active_Research/Larix_data_and_outs/FSC_out/Larix_pars_conv.csv")
 
+#### Specify the generation time
+gen_time <- 180
 
 
 
@@ -54,8 +56,8 @@ for(j in 1:length(mods_convert)){ # loop over the models doing the conversions w
   ### Go through and populate the new matrix with values converted from the raw values
   ind_npop<-grep("NPOP", names(converted)) # indices of elements that are population sizes
   converted[ind_npop]<-round(raw_est[ind_npop]/2, -2) # pop sizes get divided by 2 to be diploid and round to hundreds place
-  ind_times<-grep("TDIV|TCONT|TSEP|TRESIZE", names(converted))  # index of elements that are times (divergences or secondary contact)
-  converted[ind_times]<-round(raw_est[ind_times]*3, -2) ## times get multiplied by 3 years for generation time - round to hundreds place also
+  ind_times<-grep("TDIV|TCONT|TSEP|TRESIZE|TMIG", names(converted))  # index of elements that are times (divergences or secondary contact)
+  converted[ind_times]<-round(raw_est[ind_times]*gen_time, -2) ## times get multiplied by 3 years for generation time - round to hundreds place also
   # migration rates are multipled by 2 and by population size of the population that the migration is into (e.g., MIG20 is migration 2->0 and is multiplied by pop size 0 NPOP0)
   # this is slightly more complex, so handle with a loop
   ind_mig<-grep("MIG", names(converted)) # indices of elements that are migration rates
@@ -219,18 +221,20 @@ colnames(converted_table)
 
 ## Get  the maximum pseudolikelihood estimates for each parameter
 ests <- point_ests_all[1,]  # reduce this down to just the best fit model
-# Set up times
+# Set up times - time estimates (t ests - not tests)
   time_ests <- ests[c("TDIV1")]
   tests_2 <- as.data.frame(t(time_ests))
   tests_3 <- cbind(rownames(tests_2), tests_2)
   colnames(tests_3) <- c("Event", "Time")
-
+  tests_3$Event <- gsub("TDIV1", "TDiv1", tests_3$Event)
+  
+  
   # set up migration rates
   mig_ests <- ests[c("MIG01", "MIG10", "MIG02", "MIG20", "MIG12", "MIG21", "MIG012", "MIG120")]
   mests_2 <- as.data.frame(t(mig_ests))
   mests_3 <- cbind(rownames(mests_2), mests_2)
   colnames(mests_3) <- c("Rate", "IndperGen")
-  mests_3$Rate <- c("East_splendida", "splendida_East", "californiae_splendida", "splendida_californiae", "East_West", "West_East")
+  mests_3$Rate <- c("Cascades_NRockies", "NRockies_Cascades", "Cascades_SRockies", "SRockies_Cascades", "NRockies_SRockies", "SRockies_NRockies", "Cascades_AncRockies", "AncRockies_Cascades")
   
   
   
@@ -241,7 +245,7 @@ ests <- point_ests_all[1,]  # reduce this down to just the best fit model
   pests_2 <- as.data.frame(t(pop_ests))
   pests_3 <- cbind(rownames(pests_2), pests_2)
   colnames(pests_3) <- c("Population", "Individuals")
-  pests_3$Population <- c("RootAnc", "CalSplenAnc", "EastPreBot", "CalPreBot", "SplenPreBot", "East", "Cal", "Splen")
+  pests_3$Population <- c("RootAnc", "AncRockies", "Cascades", "NRockies", "SRockies")
 
 
 
@@ -269,42 +273,48 @@ ggplot(times, aes(x=Event, y=Time)) +
   geom_point(data = tests_3, aes(x = Event, y = Time), size = 3, shape = 23, fill = "black") +
   theme_minimal()
 
-## make the times into million years
-times_ma <- times
-times_ma$Time <- times_ma$Time/1000000
+## make the times into thousand years
+times_ka <- times
+times_ka$Time <- times_ka$Time/1000
 tests_4 <- tests_3
-tests_4$Time <- tests_4$Time/1000000
+tests_4$Time <- tests_4$Time/1000
 
 setwd(plots_out_dir)
-pdf(file="getula_FSCboot_times.pdf", width=5.5, height=3)
-ggplot(times_ma, aes(x=Event, y=Time)) + 
+pdf(file="Larix_FSCboot_times.pdf", width=5.5, height=3)
+ggplot(times_ka, aes(x=Event, y=Time)) + 
   geom_violin(trim=FALSE, fill="lightblue") +
   geom_point(data = tests_4, aes(x = Event, y = Time), size = 3, shape = 23, fill = "black") + 
-  scale_y_continuous(breaks = seq(0, 4, by = 1), minor_breaks = seq(0 , 4, 0.25)) +
-  ylab("Time (million years)") +
+  # scale_y_continuous(breaks = seq(0, 4, by = 1), minor_breaks = seq(0 , 4, 0.25)) +
+  ylab("Time (thousand years)") +
   theme_minimal()
 dev.off()
 
 ### Plot out migration as violin plots
-MIG02<-cbind(converted_table$MIG02, "East_splendida")    # MIG02
-MIG20<-cbind(converted_table$MIG20, "splendida_East")    # MIG20
-MIG12<-cbind(converted_table$MIG12, "californiae_splendida")    # MIG12
-MIG21<-cbind(converted_table$MIG21, "splendida_californiae")    # MIG21
-MIG012<-cbind(converted_table$MIG012, "East_West") # MIG012
-MIG120<-cbind(converted_table$MIG120, "West_East") # MIG120
+MIG01<-cbind(converted_table$MIG01, "Cascades_NRockies")    # MIG01
+MIG10<-cbind(converted_table$MIG10, "NRockies_Cascades")    # MIG10
+MIG02<-cbind(converted_table$MIG02, "Cascades_SRockies")    # MIG02
+MIG20<-cbind(converted_table$MIG20, "SRockies_Cascades")    # MIG20
+MIG12<-cbind(converted_table$MIG12, "NRockies_SRockies")    # MIG12
+MIG21<-cbind(converted_table$MIG21, "SRockies_NRockies")    # MIG21
+MIG012<-cbind(converted_table$MIG012, "Cascades_AncRockies") # MIG012
+MIG120<-cbind(converted_table$MIG120, "AncRockies_Cascades") # MIG120
 
-migs <- rbind(MIG02, MIG20, MIG12, MIG21, MIG012, MIG120)
+
+migs <- rbind(MIG01, MIG10, MIG02, MIG20, MIG12, MIG21, MIG012, MIG120)
 colnames(migs) <- c("IndperGen", "Rate")
 migs <- as.data.frame(migs)
 migs$IndperGen <- as.numeric(migs$IndperGen)
-migs$Rate <- factor(migs$Rate , levels=c("californiae_splendida", "splendida_californiae","splendida_East", "East_splendida", "West_East", "East_West"))
+migs$Rate <- factor(migs$Rate , levels=c("Cascades_NRockies", "NRockies_Cascades", "Cascades_SRockies", "SRockies_Cascades", "NRockies_SRockies", "SRockies_NRockies", "Cascades_AncRockies", "AncRockies_Cascades"))
+
+
+
 
 ggplot(migs, aes(x=Rate, y=IndperGen)) + 
   geom_violin(trim=FALSE, fill="green") +
   theme_minimal()
 
 
-## set the ylim lower - there are some extreme outliers for mig120
+## set the ylim lower - there are some extreme outliers for mig012
 ggplot(migs, aes(x=Rate, y=IndperGen)) + 
   geom_violin(trim=FALSE, fill="green") +
   theme_minimal() +
@@ -313,7 +323,7 @@ ggplot(migs, aes(x=Rate, y=IndperGen)) +
 
 ############################################################
 ### add in the best estimates - VIOLIN PLOT
-pdf(file="getula_FSCboot_mig.pdf", width = 5.5, height = 3)
+pdf(file="Larix_FSCboot_mig.pdf", width = 7, height = 3.5)
 ggplot(migs, aes(x=Rate, y=IndperGen)) + 
   geom_violin(trim=FALSE, fill="green") +
   # ylim(0,30) +
@@ -321,7 +331,8 @@ ggplot(migs, aes(x=Rate, y=IndperGen)) +
   scale_y_continuous(breaks = seq(0, 15, by = 5), minor_breaks = seq(0 , 15, 1), limits = c(0, 15)) +
   ylab("Individuals per generation") +
   xlab(NULL) +
-  theme_minimal()
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle=30, vjust=1, hjust=0.9))
 dev.off()
 
 
@@ -330,20 +341,17 @@ dev.off()
 
 ### Plot out pop sizes as violin plots
 NPOProotanc<-cbind(converted_table$NPOProotanc, "RootAnc")
-NPOP12anc<-cbind(converted_table$NPOP12anc, "CalSplenAnc")
-NPOP0PB<-cbind(converted_table$NPOP0PB, "EastPreBot")
-NPOP1PB<-cbind(converted_table$NPOP1PB, "CalPreBot")
-NPOP2PB<-cbind(converted_table$NPOP2PB, "SplenPreBot")
-NPOP0<-cbind(converted_table$NPOP0, "East")
-NPOP1<-cbind(converted_table$NPOP1, "Cal")
-NPOP2<-cbind(converted_table$NPOP2, "Splen")
+NPOP12anc<-cbind(converted_table$NPOP12anc, "AncRockies")
+NPOP0<-cbind(converted_table$NPOP0, "Cascades")
+NPOP1<-cbind(converted_table$NPOP1, "NRockies")
+NPOP2<-cbind(converted_table$NPOP2, "SRockies")
 
 
-popsizes <- rbind(NPOProotanc, NPOP12anc, NPOP0PB, NPOP1PB, NPOP2PB, NPOP0, NPOP1, NPOP2)
+popsizes <- rbind(NPOProotanc, NPOP12anc, NPOP0, NPOP1, NPOP2)
 colnames(popsizes) <- c("Individuals", "Population")
 popsizes <- as.data.frame(popsizes)
 popsizes$Individuals <- as.numeric(popsizes$Individuals)
-popsizes$Population <- factor(popsizes$Population , levels=c("Cal", "Splen", "East", "CalPreBot", "SplenPreBot", "EastPreBot", "CalSplenAnc", "RootAnc"))
+popsizes$Population <- factor(popsizes$Population , levels=c("Cascades", "NRockies", "SRockies", "AncRockies", "RootAnc"))
 
 ggplot(popsizes, aes(x=Population, y=Individuals)) + 
   geom_violin(trim=FALSE, fill="pink") +
@@ -364,7 +372,7 @@ popsizes_thou$Individuals <- popsizes_thou$Individuals/1000
 pests_4 <- pests_3
 pests_4$Individuals <- pests_4$Individuals/1000
 
-pdf(file="getula_FSCboot_pop.pdf", width = 5.5, height = 3)
+pdf(file="Larix_FSCboot_pop.pdf", width = 8, height = 6)
 ggplot(popsizes_thou, aes(x=Population, y=Individuals)) + 
   geom_violin(trim=FALSE, fill="pink") +
   geom_point(data = pests_4, aes(x = Population, y = Individuals), size = 3, shape = 23, fill = "black") +

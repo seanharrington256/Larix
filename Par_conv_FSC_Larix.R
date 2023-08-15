@@ -73,7 +73,7 @@ for(j in 1:length(mods_convert)){ # loop over the models doing the conversions w
   ### Go through and populate the new matrix with values converted from the raw values
   ind_npop<-grep("NPOP", names(converted)) # indices of elements that are population sizes
   converted[ind_npop]<-round(raw_est[ind_npop]/2, -2) # pop sizes get divided by 2 to be diploid and round to hundreds place
-  ind_times<-grep("TDIV|TCONT|TSEP|TRESIZE", names(converted))  # index of elements that are times (divergences or secondary contact)
+  ind_times<-grep("TDIV|TCONT|TSEP|TRESIZE|TMIG", names(converted))  # index of elements that are times (divergences or secondary contact)
   converted[ind_times]<-round(raw_est[ind_times]*gen_time, -2) ## times get multiplied by generation time - round to hundreds place also
   # migration rates are multipled by 2 and by population size of the population that the migration is into (e.g., MIG20 is migration 2->0 and is multiplied by pop size 0 NPOP0)
   # this is slightly more complex, so handle with a loop

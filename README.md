@@ -67,6 +67,12 @@ Check that it looks right - don't worry about parameter estimates, it didn't run
 ## NOTE: I think there are other times that aren't being converted - times for when ancient migration ends, possibly others - need to find these 
 
 
+Population designations:
+
+0 - Cascade
+1 - N. Rockies
+2 - S Rockies
+
 
 Hunting down failed runs:
 `grep CANCELLED *Larix_7145250*  | cut -d "_" -f 5 | cut -d "." -f 1 | sort > failed2_fsc.txt`
