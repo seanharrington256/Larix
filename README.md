@@ -117,6 +117,29 @@ numbers correspond to numbers in Dan's diagram
 
 
 
+## Running analyses using a rate instead of fixed times:
+
+Mutation rate from [Torre et al. 2017](https://academic.oup.com/mbe/article/34/6/1363/3053316)  - 1.19939E–09 per year -> 2.158902e-07 per generation
+
+
+
+Models to edit:
+1. Rate_noMK3 - X
+2. Rate_AncMK3 - X
+3. Rate_MallAsymK3 - X
+4. Rate_AncMintK3 - X
+5. Rate_SecK3 - X
+6. Rate_SecIntK3 - X
+7. Rate_AncMCoInK3 - X
+16. Rate_secLGMintK3 - X
+
+Rate-based div time with population resize (expecting expansion)added in:
+Rate_AncMCoInExpK3 - 200_AncMCoInK3 with population resize parameter added in - X
+Rate_MallAsymExpK3 - 200_MallAsymK3 with population resize parameter added in - X
+Rate_noMExpK3 - 200_noMK3 with population resize parameter added in - X
+Rate_SecExpK3 - 200_SecK3 with population resize parameter added in - X
+
+
 
 
 
