@@ -26,7 +26,7 @@ boot_in_dir <- "~/Active_Research/Larix_data_and_outs/boot_inputs" # directory w
 sfs_file <- "~/Active_Research/Larix_data_and_outs/SFS/fastsimcoal2/LarK3_MSFS.obs" # directory of SFS input for original modeling
 
 # Files from the bestrun of the best model
-bestrun_dir <- "~/Active_Research/Larix_data_and_outs/200_MallAsymK3_bestrun"
+bestrun_dir <- "~/Active_Research/Larix_data_and_outs/Rate_AncMCoInK3_bestrun"
 
 maxLfile <- list.files(path = bestrun_dir, pattern = "maxL.par$", full.names = TRUE)
 pv_to_copy <- list.files(path = bestrun_dir, pattern = ".pv$", full.names = TRUE)
@@ -258,7 +258,7 @@ writeLines(par_to_edit, basename(maxLfile)) # write this out to the new file
 ## Then go use FSC to generate the bootstrap reps. Run the following commands in terminal:
 ################################################################################################
 #$ cd /Users/harrington/Active_Research/Larix_data_and_outs/boot_inputs
-#$ fsc26 -i 200_MallAsymK3_maxL.par -n100 -j -m -s0 -x –I -q -u
+#$ fsc26 -i Rate_AncMCoInK3_maxL.par -n100 -j -m -s0 -x –I -q -u
 ################################################################################################
 
 
