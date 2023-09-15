@@ -222,19 +222,21 @@ colnames(converted_table)
 ## Get  the maximum pseudolikelihood estimates for each parameter
 ests <- point_ests_all[1,]  # reduce this down to just the best fit model
 # Set up times - time estimates (t ests - not tests)
-  time_ests <- ests[c("TDIV1")]
+  time_ests <- ests[c("TDIV1", "TDIV2")]
   tests_2 <- as.data.frame(t(time_ests))
   tests_3 <- cbind(rownames(tests_2), tests_2)
   colnames(tests_3) <- c("Event", "Time")
   tests_3$Event <- gsub("TDIV1", "TDiv1", tests_3$Event)
-  
+  tests_3$Event <- gsub("TDIV2", "TDiv2", tests_3$Event)
   
   # set up migration rates
-  mig_ests <- ests[c("MIG01", "MIG10", "MIG02", "MIG20", "MIG12", "MIG21", "MIG012", "MIG120")]
+  # mig_ests <- ests[c("MIG01", "MIG10", "MIG02", "MIG20", "MIG12", "MIG21", "MIG012", "MIG120")]
+  mig_ests <- ests[c("MIG012", "MIG120")]
   mests_2 <- as.data.frame(t(mig_ests))
   mests_3 <- cbind(rownames(mests_2), mests_2)
   colnames(mests_3) <- c("Rate", "IndperGen")
-  mests_3$Rate <- c("Cascades_NRockies", "NRockies_Cascades", "Cascades_SRockies", "SRockies_Cascades", "NRockies_SRockies", "SRockies_NRockies", "Cascades_AncRockies", "AncRockies_Cascades")
+  # mests_3$Rate <- c("Cascades_NRockies", "NRockies_Cascades", "Cascades_SRockies", "SRockies_Cascades", "NRockies_SRockies", "SRockies_NRockies", "Cascades_AncRockies", "AncRockies_Cascades")
+  mests_3$Rate <- c("Cascades_AncRockies", "AncRockies_Cascades")
   
   
   
@@ -254,13 +256,14 @@ ests <- point_ests_all[1,]  # reduce this down to just the best fit model
   
 
 ### Plot out times as violin plots
-times <- cbind(converted_table$TDIV1, "TDiv1")
-
-
+tdiv1<-cbind(converted_table$TDIV1, "TDiv1")
+tdiv2<-cbind(converted_table$TDIV2, "TDiv2")
+  
+times <- rbind(tdiv2, tdiv1)
 colnames(times) <- c("Time", "Event")
 times <- as.data.frame(times)
 times$Time <- as.numeric(times$Time)
-times$Event <- factor(times$Event , levels=c("TCont2", "TDiv1", "TResize", "TCont1"))
+times$Event <- factor(times$Event , levels=c("TDiv1", "TDiv2"))
 
 ggplot(times, aes(x=Event, y=Time)) + 
   geom_violin(trim=FALSE, fill="blue") +
@@ -290,17 +293,18 @@ ggplot(times_ka, aes(x=Event, y=Time)) +
 dev.off()
 
 ### Plot out migration as violin plots
-MIG01<-cbind(converted_table$MIG01, "Cascades_NRockies")    # MIG01
-MIG10<-cbind(converted_table$MIG10, "NRockies_Cascades")    # MIG10
-MIG02<-cbind(converted_table$MIG02, "Cascades_SRockies")    # MIG02
-MIG20<-cbind(converted_table$MIG20, "SRockies_Cascades")    # MIG20
-MIG12<-cbind(converted_table$MIG12, "NRockies_SRockies")    # MIG12
-MIG21<-cbind(converted_table$MIG21, "SRockies_NRockies")    # MIG21
+# MIG01<-cbind(converted_table$MIG01, "Cascades_NRockies")    # MIG01
+# MIG10<-cbind(converted_table$MIG10, "NRockies_Cascades")    # MIG10
+# MIG02<-cbind(converted_table$MIG02, "Cascades_SRockies")    # MIG02
+# MIG20<-cbind(converted_table$MIG20, "SRockies_Cascades")    # MIG20
+# MIG12<-cbind(converted_table$MIG12, "NRockies_SRockies")    # MIG12
+# MIG21<-cbind(converted_table$MIG21, "SRockies_NRockies")    # MIG21
 MIG012<-cbind(converted_table$MIG012, "Cascades_AncRockies") # MIG012
 MIG120<-cbind(converted_table$MIG120, "AncRockies_Cascades") # MIG120
 
 
-migs <- rbind(MIG01, MIG10, MIG02, MIG20, MIG12, MIG21, MIG012, MIG120)
+# migs <- rbind(MIG01, MIG10, MIG02, MIG20, MIG12, MIG21, MIG012, MIG120)
+migs <- rbind(MIG012, MIG120)
 colnames(migs) <- c("IndperGen", "Rate")
 migs <- as.data.frame(migs)
 migs$IndperGen <- as.numeric(migs$IndperGen)
@@ -315,10 +319,10 @@ ggplot(migs, aes(x=Rate, y=IndperGen)) +
 
 
 ## set the ylim lower - there are some extreme outliers for mig012
-ggplot(migs, aes(x=Rate, y=IndperGen)) + 
-  geom_violin(trim=FALSE, fill="green") +
-  theme_minimal() +
-  ylim(0,15)
+# ggplot(migs, aes(x=Rate, y=IndperGen)) + 
+#   geom_violin(trim=FALSE, fill="green") +
+#   theme_minimal() +
+#   ylim(0,15)
 
 
 ############################################################
@@ -328,7 +332,7 @@ ggplot(migs, aes(x=Rate, y=IndperGen)) +
   geom_violin(trim=FALSE, fill="green") +
   # ylim(0,30) +
   geom_point(data = mests_3, aes(x = Rate, y = IndperGen), size = 3, shape = 23, fill = "black") +
-  scale_y_continuous(breaks = seq(0, 15, by = 5), minor_breaks = seq(0 , 15, 1), limits = c(0, 15)) +
+  # scale_y_continuous(breaks = seq(0, 15, by = 5), minor_breaks = seq(0 , 15, 1), limits = c(0, 15)) +
   ylab("Individuals per generation") +
   xlab(NULL) +
   theme_minimal() +
