@@ -45,13 +45,16 @@ Check that it looks right - don't worry about parameter estimates, it didn't run
 
 2. Get the linux executable for FSC: http://cmpg.unibe.ch/software/fastsimcoal2/ (for running this on a Linux cluster, as I did).
 
-3. Put the `Models` directory (without any name changes or scripts below won't work) onto the cluster. The `Models` directory must contain a directory for each model to be estimated (each containing a `.tpl` and `.est` file) - the current `Models` directory does this - as well as the sfs file. 
+3. Put the `Models` directory (without any name changes or scripts below won't work) onto the cluster. The `Models` directory must contain a directory for each model to be estimated (each containing a `.tpl` and `.est` file) - the current `Models` directory does this - as well as the sfs file (i.e., a single SFS file in the Models directory outside dirs for each model). 
 
 ## EDIT THIS: You will need to add the sfs `.obs` file from Dryad if running this.
 
-4. To run multiple replicates of FSC parameter estimation, use the `Prep_FSC_reps.sh` script. Details of how to use this script are in the comments inside it. Briefly, run it from inside the Models folder made in step 6, supplying an argument specifying if you are using either multi-dimensional SFS (argument MSFS) or two-dimensional SFS (argument jointMAF). This will make 50 replicates in a directory "Reps" in the parent directory of Models, each containing the necessary tpl, est, and obs file.
+4. To run multiple replicates of FSC parameter estimation, use the `Prep_FSC_reps.sh` script. Details of how to use this script are in the comments inside it. Briefly, run it from inside the Models folder made in step 6, supplying an argument specifying if you are using either multi-dimensional SFS (argument MSFS) or two-dimensional SFS (argument jointMAF). This will make 50 replicates in a directory "Reps" in the parent directory of Models, each containing the necessary tpl, est, and obs file. e.g., 
 
-5. Submit all of the jobs to the cluster as a big job array on a SLURM cluster using `FSC_Larix_Mods.slurm`.
+`cd /project/inbreh/turck_fsc/Models`
+`Prep_FSC_reps.sh MSFS`
+
+5. Submit all of the jobs to the cluster as a big job array on a SLURM cluster using `FSC_Larix_Mods.slurm` (or similar named slurm scripts for rate/stacks datasets).
 
 
 6. For each of the models find the single run with the best likelihood. The script `Get_best_FSCacross_mods.sh` wraps the `fsc-selectbestrun.sh` script from here: [https://raw.githubusercontent.com/speciationgenomics/scripts/master/fsc-selectbestrun.sh](https://raw.githubusercontent.com/speciationgenomics/scripts/master/fsc-selectbestrun.sh) (and copied here with some slight modifications) across each model. Comments in this script further describe its usage--run it from within the `Reps` directory. To get AIC from the bestlhoods files, go inside `best_L_allMods` directory, created by last script, and run the script `Get_AIC_across_mods.R`(!!!NOTE: This AIC calculation will only work if you output 1 and exactly 1 parameter to this file for each estimated parameter otherwise the AIC values will be incorrect -- i.e., if you have a complex parameter, and you output both the estimated parameter and the complex parameter that is a transformation of the estimated parameter, you'll need a different solution here).
@@ -122,17 +125,6 @@ numbers correspond to numbers in Dan's diagram
 Mutation rate from [Torre et al. 2017](https://academic.oup.com/mbe/article/34/6/1363/3053316)  - 1.19939E–09 per year -> 2.158902e-07 per generation
 
 
-
-Models to edit:
-1. Rate_noMK3 - X
-2. Rate_AncMK3 - X
-3. Rate_MallAsymK3 - X
-4. Rate_AncMintK3 - X
-5. Rate_SecK3 - X
-6. Rate_SecIntK3 - X
-7. Rate_AncMCoInK3 - X
-16. Rate_secLGMintK3 - X
-
 Rate-based div time with population resize (expecting expansion)added in:
 Rate_AncMCoInExpK3 - 200_AncMCoInK3 with population resize parameter added in - X
 Rate_MallAsymExpK3 - 200_MallAsymK3 with population resize parameter added in - X
@@ -142,7 +134,26 @@ Rate_SecExpK3 - 200_SecK3 with population resize parameter added in - X
 
 
 
+## May need to update some stuff above here with better description, but I think everything is basically documented - gotta be better at documenting **everything**
 
-- use `4LAR_no_outgroups.recode_dp07mis07.recode.vcf`
+
+## Running FSC with a rate but with output from Stacks
+
+- use `04LAR_no_outgroups.recode_dp07mis07.recode.vcf`  in `~/Active_Research/Larix_data_and_outs/Actually use these/Stacks/Stacks_runs_for_fast_simcoal`
+
+
+EasySFS, as above:
+
+```
+	easySFS.py -i 04StksLAR_no_outgroups.recode_dp07mis07.recode.vcf -p 4Stks_Pop_file_no_outgroups_3pops.txt --preview
+
+	easySFS.py -i 04StksLAR_no_outgroups.recode_dp07mis07.recode.vcf -p 4Stks_Pop_file_no_outgroups_3pops.txt --proj=8,12,19 --prefix LarStkK3 -o /Users/harrington/Active_Research/Larix_data_and_outs/SFS_stacks
+```
+
+The file output from this is `LarStkK3_MSFS.obs`.
+
+Then, just follow the "Models" steps above. These are the same models as the rate ones for ipyrad, just with different SFS input, and need to change the number of individuals per pop.
+
+
 
 
