@@ -21,12 +21,12 @@ gen_time <- 180
 
 
 ##### set up directories/files here
-bestlhoods_dir <- "~/Active_Research/Larix_data_and_outs/FSC_out"
-boot_in_dir <- "~/Active_Research/Larix_data_and_outs/boot_inputs" # directory where we will create input files to run bootstraps
-sfs_file <- "~/Active_Research/Larix_data_and_outs/SFS/fastsimcoal2/LarK3_MSFS.obs" # directory of SFS input for original modeling
+bestlhoods_dir <- "~/Active_Research/Larix_data_and_outs/stacks_rate_FSC_out/"
+boot_in_dir <- "~/Active_Research/Larix_data_and_outs/stacks_rate_boot_inputs" # directory where we will create input files to run bootstraps
+sfs_file <- "~/Active_Research/Larix_data_and_outs/SFS_stacks/fastsimcoal2/LarStkK3_MSFS.obs" # directory of SFS input for original modeling
 
 # Files from the bestrun of the best model
-bestrun_dir <- "~/Active_Research/Larix_data_and_outs/Rate_AncMCoInK3_bestrun"
+bestrun_dir <- paste0(bestlhoods_dir, "Rate_noMK3")
 
 maxLfile <- list.files(path = bestrun_dir, pattern = "maxL.par$", full.names = TRUE)
 pv_to_copy <- list.files(path = bestrun_dir, pattern = ".pv$", full.names = TRUE)
@@ -35,7 +35,7 @@ tpl_to_copy <- list.files(path = bestrun_dir, pattern = ".tpl$", full.names = TR
 
 
 # name the output file for converted parameter estimates
-out_ests <- "Larix_pars_conv.csv"
+out_ests <- "Larix_Stacks_rate_pars_conv.csv"
 
 
 

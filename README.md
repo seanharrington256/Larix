@@ -52,6 +52,7 @@ Check that it looks right - don't worry about parameter estimates, it didn't run
 4. To run multiple replicates of FSC parameter estimation, use the `Prep_FSC_reps.sh` script. Details of how to use this script are in the comments inside it. Briefly, run it from inside the Models folder made in step 6, supplying an argument specifying if you are using either multi-dimensional SFS (argument MSFS) or two-dimensional SFS (argument jointMAF). This will make 50 replicates in a directory "Reps" in the parent directory of Models, each containing the necessary tpl, est, and obs file. e.g., 
 
 `cd /project/inbreh/turck_fsc/Models`
+
 `Prep_FSC_reps.sh MSFS`
 
 5. Submit all of the jobs to the cluster as a big job array on a SLURM cluster using `FSC_Larix_Mods.slurm` (or similar named slurm scripts for rate/stacks datasets).
@@ -154,6 +155,13 @@ The file output from this is `LarStkK3_MSFS.obs`.
 
 Then, just follow the "Models" steps above. These are the same models as the rate ones for ipyrad, just with different SFS input, and need to change the number of individuals per pop.
 
+
+## Running FSC with output from stacks, but calibrated to 31k years at the root
+
+- Use same SFS as for Stacks with a rate
+- calibrate root to 172 generations (31k years / 180 years/generation)
+
+Then, just follow the "Models" steps above. These are the same models as the rate ones for ipyrad, just with different SFS input, and need to change the number of individuals per pop.
 
 
 
