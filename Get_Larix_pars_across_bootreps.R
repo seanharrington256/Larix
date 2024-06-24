@@ -23,11 +23,11 @@ library(stringr)
 library(ggplot2)
 
 
-setwd("~/Active_Research/Larix_data_and_outs/Boot_best_L_allMods")
-plots_out_dir <- "~/Active_Research/Larix_data_and_outs/Boot_summaries"
+setwd("~/Active_Research/Larix_data_and_outs/stacks_31k_boot_out/best_L_allMods")
+plots_out_dir <- "~/Active_Research/Larix_data_and_outs/stacks_31k_boot_out/boot_summaries"
 
 # load in the best estimates from the empirical data
-point_ests_all <- read.csv("~/Active_Research/Larix_data_and_outs/FSC_out/Larix_pars_conv.csv")
+point_ests_all <- read.csv("~/Active_Research/Larix_data_and_outs/stacks_31k_out/Larix_Stacks_31k_pars_conv.csv")
 
 #### Specify the generation time
 gen_time <- 180
@@ -35,7 +35,7 @@ gen_time <- 180
 
 
 ## List all of the .bestlhoods files
-files_lnl<-list.files(recursive=TRUE, pattern=".bestlhoods")
+files_lnl<-list.files(recursive=FALSE, pattern=".bestlhoods")
 
 ## Read in these files
 output<-lapply(files_lnl, read.table, header=TRUE)
@@ -222,12 +222,12 @@ colnames(converted_table)
 ## Get  the maximum pseudolikelihood estimates for each parameter
 ests <- point_ests_all[1,]  # reduce this down to just the best fit model
 # Set up times - time estimates (t ests - not tests)
-  time_ests <- ests[c("TDIV1", "TDIV2")]
+  time_ests <- ests[c("TDIV1", "TRESIZE")]
   tests_2 <- as.data.frame(t(time_ests))
   tests_3 <- cbind(rownames(tests_2), tests_2)
   colnames(tests_3) <- c("Event", "Time")
-  tests_3$Event <- gsub("TDIV1", "TDiv1", tests_3$Event)
-  tests_3$Event <- gsub("TDIV2", "TDiv2", tests_3$Event)
+  tests_3$Event <- gsub("TDIV1", "TDiv", tests_3$Event)
+  tests_3$Event <- gsub("TRESIZE", "TResize", tests_3$Event)
   
   # set up migration rates
   # mig_ests <- ests[c("MIG01", "MIG10", "MIG02", "MIG20", "MIG12", "MIG21", "MIG012", "MIG120")]
@@ -243,11 +243,11 @@ ests <- point_ests_all[1,]  # reduce this down to just the best fit model
   
 
 # Set up pop sizes
-  pop_ests <- ests[c("NPOProotanc", "NPOP12anc", "NPOP0", "NPOP1", "NPOP2")]
+  pop_ests <- ests[c("NPOProotanc", "NPOP12anc", "NPOP0", "NPOP1", "NPOP2", "NPOP0PB", "NPOP1PB", "NPOP2PB")]
   pests_2 <- as.data.frame(t(pop_ests))
   pests_3 <- cbind(rownames(pests_2), pests_2)
   colnames(pests_3) <- c("Population", "Individuals")
-  pests_3$Population <- c("RootAnc", "AncRockies", "Cascades", "NRockies", "SRockies")
+  pests_3$Population <- c("RootAnc", "AncRockies", "Cascades", "NRockies", "SRockies", "CascadesPreExp", "NRockiesPreExp", "SRockiesPreExp")
 
 
 
@@ -256,14 +256,14 @@ ests <- point_ests_all[1,]  # reduce this down to just the best fit model
   
 
 ### Plot out times as violin plots
-tdiv1<-cbind(converted_table$TDIV1, "TDiv1")
-tdiv2<-cbind(converted_table$TDIV2, "TDiv2")
+tdiv1 <- cbind(converted_table$TDIV1, "TDiv")
+tresize <- cbind(converted_table$TRESIZE, "TResize")
   
-times <- rbind(tdiv2, tdiv1)
+times <- rbind(tdiv1, tresize)
 colnames(times) <- c("Time", "Event")
 times <- as.data.frame(times)
 times$Time <- as.numeric(times$Time)
-times$Event <- factor(times$Event , levels=c("TDiv1", "TDiv2"))
+times$Event <- factor(times$Event , levels=c("TDiv", "TResize"))
 
 ggplot(times, aes(x=Event, y=Time)) + 
   geom_violin(trim=FALSE, fill="blue") +
@@ -318,11 +318,11 @@ ggplot(migs, aes(x=Rate, y=IndperGen)) +
   theme_minimal()
 
 
-## set the ylim lower - there are some extreme outliers for mig012
-# ggplot(migs, aes(x=Rate, y=IndperGen)) + 
-#   geom_violin(trim=FALSE, fill="green") +
-#   theme_minimal() +
-#   ylim(0,15)
+# set the ylim lower - there are some extreme outliers for mig012
+ggplot(migs, aes(x=Rate, y=IndperGen)) +
+  geom_violin(trim=FALSE, fill="green") +
+  theme_minimal() +
+  ylim(0,15)
 
 
 ############################################################
@@ -330,7 +330,7 @@ ggplot(migs, aes(x=Rate, y=IndperGen)) +
 pdf(file="Larix_FSCboot_mig.pdf", width = 7, height = 3.5)
 ggplot(migs, aes(x=Rate, y=IndperGen)) + 
   geom_violin(trim=FALSE, fill="green") +
-  # ylim(0,30) +
+  ylim(0,15) +
   geom_point(data = mests_3, aes(x = Rate, y = IndperGen), size = 3, shape = 23, fill = "black") +
   # scale_y_continuous(breaks = seq(0, 15, by = 5), minor_breaks = seq(0 , 15, 1), limits = c(0, 15)) +
   ylab("Individuals per generation") +
@@ -344,18 +344,22 @@ dev.off()
 
 
 ### Plot out pop sizes as violin plots
-NPOProotanc<-cbind(converted_table$NPOProotanc, "RootAnc")
-NPOP12anc<-cbind(converted_table$NPOP12anc, "AncRockies")
-NPOP0<-cbind(converted_table$NPOP0, "Cascades")
-NPOP1<-cbind(converted_table$NPOP1, "NRockies")
-NPOP2<-cbind(converted_table$NPOP2, "SRockies")
+NPOProotanc <- cbind(converted_table$NPOProotanc, "RootAnc")
+NPOP12anc <- cbind(converted_table$NPOP12anc, "AncRockies")
+NPOP0 <- cbind(converted_table$NPOP0, "Cascades")
+NPOP1 <- cbind(converted_table$NPOP1, "NRockies")
+NPOP2 <- cbind(converted_table$NPOP2, "SRockies")
+NPOP0PB <- cbind(converted_table$NPOP0PB, "CascadesPreExp")
+NPOP1PB <- cbind(converted_table$NPOP1PB, "NRockiesPreExp")
+NPOP2PB <- cbind(converted_table$NPOP2PB, "SRockiesPreExp")
 
 
-popsizes <- rbind(NPOProotanc, NPOP12anc, NPOP0, NPOP1, NPOP2)
+
+popsizes <- rbind(NPOProotanc, NPOP12anc, NPOP0, NPOP1, NPOP2, NPOP0PB, NPOP1PB, NPOP2PB)
 colnames(popsizes) <- c("Individuals", "Population")
 popsizes <- as.data.frame(popsizes)
 popsizes$Individuals <- as.numeric(popsizes$Individuals)
-popsizes$Population <- factor(popsizes$Population , levels=c("Cascades", "NRockies", "SRockies", "AncRockies", "RootAnc"))
+popsizes$Population <- factor(popsizes$Population , levels=c("Cascades", "NRockies", "SRockies", "CascadesPreExp", "NRockiesPreExp", "SRockiesPreExp", "AncRockies", "RootAnc"))
 
 ggplot(popsizes, aes(x=Population, y=Individuals)) + 
   geom_violin(trim=FALSE, fill="pink") +

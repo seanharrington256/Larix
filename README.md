@@ -183,5 +183,8 @@ Then, just follow the "Models" steps above. These are the same models as the rat
 
 Then, just follow the "Models" steps above. These are the same models as the rate ones for ipyrad, just with different SFS input, and need to change the number of individuals per pop.
 
+- These seem best
 
+- Done with running all the models
 
+For bootstraps, 4 replicates returned negative TRESIZE parameters, just exlucded these when summarizing bootstraps

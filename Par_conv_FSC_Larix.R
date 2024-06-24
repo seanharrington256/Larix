@@ -20,13 +20,30 @@ library(stringr)
 gen_time <- 180
 
 
+# ##### set up directories/files here
+# bestlhoods_dir <- "~/Active_Research/Larix_data_and_outs/ipyrad_31k_out/"
+# boot_in_dir <- "~/Active_Research/Larix_data_and_outs/ipyrad_31k_boot_inputs" # directory where we will create input files to run bootstraps
+# sfs_file <- "~/Active_Research/Larix_data_and_outs/SFS/fastsimcoal2/LarK3_MSFS.obs" # directory of SFS input for original modeling
+# 
+# # # Files from the bestrun of the best model
+# # bestrun_dir <- paste0(bestlhoods_dir, "Rate_noMK3")
+# 
+# # name the output file for converted parameter estimates
+# out_ests <- "Larix_ipyrad_31k_pars_conv.csv"
+
+
+
 ##### set up directories/files here
-bestlhoods_dir <- "~/Active_Research/Larix_data_and_outs/stacks_rate_FSC_out/"
-boot_in_dir <- "~/Active_Research/Larix_data_and_outs/stacks_rate_boot_inputs" # directory where we will create input files to run bootstraps
+bestlhoods_dir <- "~/Active_Research/Larix_data_and_outs/stacks_31k_out/"
+boot_in_dir <- "~/Active_Research/Larix_data_and_outs/stacks_31k_boot_inputs/" # directory where we will create input files to run bootstraps
 sfs_file <- "~/Active_Research/Larix_data_and_outs/SFS_stacks/fastsimcoal2/LarStkK3_MSFS.obs" # directory of SFS input for original modeling
 
 # Files from the bestrun of the best model
-bestrun_dir <- paste0(bestlhoods_dir, "Rate_noMK3")
+bestrun_dir <- paste0(bestlhoods_dir, "31k_AncMCoInExpK3")
+
+# name the output file for converted parameter estimates
+out_ests <- "Larix_Stacks_31k_pars_conv.csv"
+
 
 maxLfile <- list.files(path = bestrun_dir, pattern = "maxL.par$", full.names = TRUE)
 pv_to_copy <- list.files(path = bestrun_dir, pattern = ".pv$", full.names = TRUE)
@@ -34,8 +51,6 @@ est_to_copy <- list.files(path = bestrun_dir, pattern = ".est$", full.names = TR
 tpl_to_copy <- list.files(path = bestrun_dir, pattern = ".tpl$", full.names = TRUE)
 
 
-# name the output file for converted parameter estimates
-out_ests <- "Larix_Stacks_rate_pars_conv.csv"
 
 
 
@@ -241,7 +256,7 @@ SFS<-SFS_all[3]
 SFS_nums<-strsplit(SFS, split=" ")
 # sum these numbers to find the total number of SNPs - note this includes monomorphics
 num_SNPs<-round(sum(as.numeric(SFS_nums[[1]])), 0)
-### This SFS has 1577 SNPs -- again, note that this includes monomorphics
+
 
  
 # read in each maxL_file change number of independent loci to the number of SNPs to make it ready for bootstrapping, write to where the bootstraps are
@@ -257,8 +272,8 @@ writeLines(par_to_edit, basename(maxLfile)) # write this out to the new file
 ################################################################################################
 ## Then go use FSC to generate the bootstrap reps. Run the following commands in terminal:
 ################################################################################################
-#$ cd /Users/harrington/Active_Research/Larix_data_and_outs/boot_inputs
-#$ fsc26 -i Rate_AncMCoInK3_maxL.par -n100 -j -m -s0 -x –I -q -u
+#$ cd /Users/harrington/Active_Research/Larix_data_and_outs/stacks_31k_boot_inputs
+#$ fsc26 -i 31k_AncMCoInExpK3_maxL.par -n100 -j -m -s0 -x –I -q -u
 ################################################################################################
 
 
