@@ -188,3 +188,12 @@ Then, just follow the "Models" steps above. These are the same models as the rat
 - Done with running all the models
 
 For bootstraps, 4 replicates returned negative TRESIZE parameters, just exlucded these when summarizing bootstraps
+
+
+### stairwayplot2
+
+* Directory `stairwayplot2`
+
+`Larix_stairwayplot2.ipynb` contains Jupyter notebook for estimation of population size through time for populations of *Larix* over multiple different datasets.
+
+
