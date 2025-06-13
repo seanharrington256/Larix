@@ -7,22 +7,35 @@
 This repository contains my code for fitting demographic models and estimating model parameters for Dan's Larix data.
 
 
+
+
+
+<br>
+<br>
+
+
+
+
 ### Create SFS
 
-FastSimCoal takes the site frequency spectrum (SFS) as input. To generate the SFS, I used Isaac Overcast's `easySFS.py` script from here: [https://github.com/isaacovercast/easySFS](https://github.com/isaacovercast/easySFS ). To determine how many alleles to project down (downsample to) to account for missing data, I ran the first line to preview the sizes of datasets at various projections. The second lines generates the SFS is the projection I used:
+FastSimCoal takes the site frequency spectrum (SFS) as input. To generate the SFS, I used Isaac Overcast's `easySFS.py` script from here: [https://github.com/isaacovercast/easySFS](https://github.com/isaacovercast/easySFS). To determine how many alleles to project down (downsample to) to account for missing data, I ran the first line to preview the sizes of datasets at various projections. The second lines generates the SFS is the projection I used:
 
 
 ```
-	easySFS.py -i 4LAR_no_outgroups.recode_dp07mis07.recode.vcf -p LAR_Pop_file_without_outgroups_3_populations.txt --preview
+easySFS.py -i 444LAR_no_out.vcf -p New_ipyrad_popfile.txt --preview
 
-	easySFS.py -i 4LAR_no_outgroups.recode_dp07mis07.recode.vcf -p LAR_Pop_file_without_outgroups_3_populations.txt --proj=8,14,22 --prefix LarK3 -o /Users/harrington/Active_Research/Larix_data_and_outs/SFS
+easySFS.py -i 444LAR_no_out.vcf -p New_ipyrad_popfile.txt --proj=8,14,22 --prefix LarK3 -o /project/inbreh/larix_turck/scripts_larix/sfs_popfile
 ```
+
 
 The file output from this is `LarK3_MSFS.obs`.
 
 ### Divergence time
 
-Divergence time at the root is fixed to either 20k years or 200k years. Assuming a generation time of 180 years, these times become 111 or 1,111 generations. We fit all models under each of these assumed divergence times. 
+Divergence time at the root is fixed to either 2.7 M years. Assuming a generation time of 180 years, this is 15000 generations. We fit all models under this assumed divergence time. 
+
+
+# BUILT THE NEW MODELS, NEED TO DOUBLE CHECK THAT THEY ALL LOOK RIGHT WITH parfileintep
 
 
 
@@ -45,17 +58,22 @@ Check that it looks right - don't worry about parameter estimates, it didn't run
 
 2. Get the linux executable for FSC: http://cmpg.unibe.ch/software/fastsimcoal2/ (for running this on a Linux cluster, as I did).
 
-3. Put the `Models` directory (without any name changes or scripts below won't work) onto the cluster. The `Models` directory must contain a directory for each model to be estimated (each containing a `.tpl` and `.est` file) - the current `Models` directory does this - as well as the sfs file (i.e., a single SFS file in the Models directory outside dirs for each model). 
+3. Copy the `Models` directory out of the scripts directory to wherever you want to run things from. The `Models` directory must contain a directory for each model to be estimated (each containing a `.tpl` and `.est` file) - the current `Models` directory does this - as well as the sfs file (i.e., a single SFS file in the Models directory outside dirs for each model). 
 
-## EDIT THIS: You will need to add the sfs `.obs` file from Dryad if running this.
+4. To run multiple replicates of FSC parameter estimation, use the `Prep_FSC_reps.sh` script. Details of how to use this script are in the comments inside it. Briefly, run it from inside the Models folder made in step 3, supplying an argument specifying if you are using either multi-dimensional SFS (argument MSFS) or two-dimensional SFS (argument jointMAF). This will make 50 replicates in a directory "Reps" in the parent directory of Models, each containing the necessary tpl, est, and obs file. e.g., 
 
-4. To run multiple replicates of FSC parameter estimation, use the `Prep_FSC_reps.sh` script. Details of how to use this script are in the comments inside it. Briefly, run it from inside the Models folder made in step 6, supplying an argument specifying if you are using either multi-dimensional SFS (argument MSFS) or two-dimensional SFS (argument jointMAF). This will make 50 replicates in a directory "Reps" in the parent directory of Models, each containing the necessary tpl, est, and obs file. e.g., 
-
-`cd /project/inbreh/turck_fsc/Models`
+`cd /project/inbreh/larix_turck/Models`
 
 `Prep_FSC_reps.sh MSFS`
 
-5. Submit all of the jobs to the cluster as a big job array on a SLURM cluster using `FSC_Larix_Mods.slurm` (or similar named slurm scripts for rate/stacks datasets).
+5. Submit all of the jobs to the cluster as a big job array on a SLURM cluster using `FSC_Larix_Mods.slurm`.
+
+
+
+
+## UP TO HERE on RE-RUN!!! Still need to double check that models are specified correctly
+
+
 
 
 6. For each of the models find the single run with the best likelihood. The script `Get_best_FSCacross_mods.sh` wraps the `fsc-selectbestrun.sh` script from here: [https://raw.githubusercontent.com/speciationgenomics/scripts/master/fsc-selectbestrun.sh](https://raw.githubusercontent.com/speciationgenomics/scripts/master/fsc-selectbestrun.sh) (and copied here with some slight modifications) across each model. Comments in this script further describe its usage--run it from within the `Reps` directory. 
