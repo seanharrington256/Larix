@@ -13,7 +13,7 @@
 0  MUTRATE$            unif    1e-8 1e-10 output
 
 [RULES]
-TDIV1$  < 172
+TDIV1$  < 15000
 
 [COMPLEX PARAMETERS]
 0 RESIZE_1$ = NPOP12anc$/NPOP2$ hide

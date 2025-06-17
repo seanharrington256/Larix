@@ -35,9 +35,6 @@ The file output from this is `LarK3_MSFS.obs`.
 Divergence time at the root is fixed to either 2.7 M years. Assuming a generation time of 180 years, this is 15000 generations. We fit all models under this assumed divergence time. 
 
 
-# BUILT THE NEW MODELS, NEED TO DOUBLE CHECK THAT THEY ALL LOOK RIGHT WITH parfileintep
-
-
 
 ### Models
 
@@ -69,17 +66,13 @@ Check that it looks right - don't worry about parameter estimates, it didn't run
 5. Submit all of the jobs to the cluster as a big job array on a SLURM cluster using `FSC_Larix_Mods.slurm`.
 
 
-
-
-## UP TO HERE on RE-RUN!!! Still need to double check that models are specified correctly
-
-
+## UP TO HERE on RE-RUN!!!
 
 
 6. For each of the models find the single run with the best likelihood. The script `Get_best_FSCacross_mods.sh` wraps the `fsc-selectbestrun.sh` script from here: [https://raw.githubusercontent.com/speciationgenomics/scripts/master/fsc-selectbestrun.sh](https://raw.githubusercontent.com/speciationgenomics/scripts/master/fsc-selectbestrun.sh) (and copied here with some slight modifications) across each model. Comments in this script further describe its usage--run it from within the `Reps` directory. 
 
 ```
-cd /project/inbreh/turck_fsc/Reps
+cd /project/inbreh/larix_turck/Reps
 Get_best_FSCacross_mods.sh
 ```
 
@@ -90,6 +83,11 @@ cd /project/inbreh/turck_fsc/Reps/best_L_allMods
 module load gcc/12.2.0 r/4.2.2
 Rscript ../../Get_AIC_across_mods.R
 ```
+
+
+
+
+
 
 7. Convert the parameter estimates into useful units (e.g., years, number of migrants per generation, etc.) -- I still don't have a fully automated solution for this, so has to be done on an ad hoc basis depending on what parameters are included, etc. I've been doing this locally, downloading files in `/project/inbreh/turck_fsc/Reps/best_L_allMods` and for the best fit model determined by AIC, go into that directory and download the files from the `bestrun` directory. `Par_conv_FSC_Larix.R` will do these conversions from these files - see comments in the script for more info. This script will also start some prep for parametric bootstrap estimation of confidence intervals around parameter estimates for the best fit model.
 

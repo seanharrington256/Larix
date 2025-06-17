@@ -18,7 +18,7 @@
 0  MUTRATE$            unif    1e-8 1e-10 output
 
 [RULES]
-TDIV1$ < 172
+TDIV1$ < 15000
 TDIV1$ - TMIG_MINUS$ > 0
 
 [COMPLEX PARAMETERS]
