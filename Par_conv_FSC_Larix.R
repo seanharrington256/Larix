@@ -12,6 +12,8 @@
 ####      name things in FSC), including migration among ancestral populations
 
 
+# On UWyo's MedicineBow cluster fire up Rstudio using:
+# module load gcc/14.2.0 r/4.4.0 rstudio/2024.04.2
 
 library(dplyr)
 library(stringr)
@@ -20,29 +22,18 @@ library(stringr)
 gen_time <- 180
 
 
-# ##### set up directories/files here
-# bestlhoods_dir <- "~/Active_Research/Larix_data_and_outs/ipyrad_31k_out/"
-# boot_in_dir <- "~/Active_Research/Larix_data_and_outs/ipyrad_31k_boot_inputs" # directory where we will create input files to run bootstraps
-# sfs_file <- "~/Active_Research/Larix_data_and_outs/SFS/fastsimcoal2/LarK3_MSFS.obs" # directory of SFS input for original modeling
-# 
-# # # Files from the bestrun of the best model
-# # bestrun_dir <- paste0(bestlhoods_dir, "Rate_noMK3")
-# 
-# # name the output file for converted parameter estimates
-# out_ests <- "Larix_ipyrad_31k_pars_conv.csv"
-
 
 
 ##### set up directories/files here
-bestlhoods_dir <- "~/Active_Research/Larix_data_and_outs/stacks_31k_out/"
-boot_in_dir <- "~/Active_Research/Larix_data_and_outs/stacks_31k_boot_inputs/" # directory where we will create input files to run bootstraps
-sfs_file <- "~/Active_Research/Larix_data_and_outs/SFS_stacks/fastsimcoal2/LarStkK3_MSFS.obs" # directory of SFS input for original modeling
+bestlhoods_dir <- "/project/inbreh/larix_turck/Reps/best_L_allMods"
+boot_in_dir <- "/project/inbreh/larix_turck/boot_inputs" # directory where we will create input files to run bootstraps
+sfs_file <- "/project/inbreh/larix_turck/scripts_larix/sfs_popfile/fastsimcoal2/LarK3_MSFS.obs" # directory of SFS input for original modeling
 
 # Files from the bestrun of the best model
-bestrun_dir <- paste0(bestlhoods_dir, "31k_AncMCoInExpK3")
+bestrun_dir <- "/project/inbreh/larix_turck/Reps/AncMCRMCExp/bestrun"
 
 # name the output file for converted parameter estimates
-out_ests <- "Larix_Stacks_31k_pars_conv.csv"
+out_ests <- paste0(bestlhoods_dir, "/Larix_pars_conv.csv")
 
 
 maxLfile <- list.files(path = bestrun_dir, pattern = "maxL.par$", full.names = TRUE)
@@ -272,8 +263,8 @@ writeLines(par_to_edit, basename(maxLfile)) # write this out to the new file
 ################################################################################################
 ## Then go use FSC to generate the bootstrap reps. Run the following commands in terminal:
 ################################################################################################
-#$ cd /Users/harrington/Active_Research/Larix_data_and_outs/stacks_31k_boot_inputs
-#$ fsc26 -i 31k_AncMCoInExpK3_maxL.par -n100 -j -m -s0 -x –I -q -u
+#$ cd /project/inbreh/larix_turck/boot_inputs
+#$ fsc26 -i AncMCRMCExp_maxL.par -n100 -j -m -s0 -x –I -q -u
 ################################################################################################
 
 

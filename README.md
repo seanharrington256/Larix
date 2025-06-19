@@ -66,9 +66,6 @@ Check that it looks right - don't worry about parameter estimates, it didn't run
 5. Submit all of the jobs to the cluster as a big job array on a SLURM cluster using `FSC_Larix_Mods.slurm`.
 
 
-## UP TO HERE on RE-RUN!!!
-
-
 6. For each of the models find the single run with the best likelihood. The script `Get_best_FSCacross_mods.sh` wraps the `fsc-selectbestrun.sh` script from here: [https://raw.githubusercontent.com/speciationgenomics/scripts/master/fsc-selectbestrun.sh](https://raw.githubusercontent.com/speciationgenomics/scripts/master/fsc-selectbestrun.sh) (and copied here with some slight modifications) across each model. Comments in this script further describe its usage--run it from within the `Reps` directory. 
 
 ```
@@ -76,35 +73,44 @@ cd /project/inbreh/larix_turck/Reps
 Get_best_FSCacross_mods.sh
 ```
 
-To get AIC from the bestlhoods files, go inside `best_L_allMods` directory, created by last script, and run the script `Get_AIC_across_mods.R`(!!!NOTE: This AIC calculation will only work if you output 1 and exactly 1 parameter to this file for each estimated parameter otherwise the AIC values will be incorrect -- i.e., if you have a complex parameter, and you output both the estimated parameter and the complex parameter that is a transformation of the estimated parameter, you'll need a different solution here).
+To get AIC from the bestlhoods files, go inside `best_L_allMods` directory, created by last script, and run the script `Get_AIC_across_mods.R` (**!!!NOTE**: This AIC calculation will only work if you output 1 and exactly 1 parameter to this file for each estimated parameter otherwise the AIC values will be incorrect -- i.e., if you have a complex parameter, and you output both the estimated parameter and the complex parameter that is a transformation of the estimated parameter, you'll need a different solution here).
 
 ```
-cd /project/inbreh/turck_fsc/Reps/best_L_allMods
-module load gcc/12.2.0 r/4.2.2
-Rscript ../../Get_AIC_across_mods.R
+cd /project/inbreh/larix_turck/Reps/best_L_allMods
+module load gcc/14.2.0 r/4.4.0
+Rscript /project/inbreh/larix_turck/scripts_larix/Get_AIC_across_mods.R
 ```
 
 
+7. Convert the parameter estimates into useful units (e.g., years, number of migrants per generation, etc.) -- I still don't have a fully automated solution for this, so has to be done on an ad hoc basis depending on what parameters are included, etc. I've been doing this interactively using `Par_conv_FSC_Larix.R` Note that it works for these models and similar models, but will not work for all possible FSC models - see comments in the script for more info. This script will also start some prep for parametric bootstrap estimation of confidence intervals around parameter estimates for the best fit model.
 
 
-
-
-7. Convert the parameter estimates into useful units (e.g., years, number of migrants per generation, etc.) -- I still don't have a fully automated solution for this, so has to be done on an ad hoc basis depending on what parameters are included, etc. I've been doing this locally, downloading files in `/project/inbreh/turck_fsc/Reps/best_L_allMods` and for the best fit model determined by AIC, go into that directory and download the files from the `bestrun` directory. `Par_conv_FSC_Larix.R` will do these conversions from these files - see comments in the script for more info. This script will also start some prep for parametric bootstrap estimation of confidence intervals around parameter estimates for the best fit model.
-
-8. Prep parametric bootstrap replicates. `Par_conv_FSC_Larix.R` from previous step generates input for bootstraps. Copy that directory to the cluster. Go into the directory that contains each of the 100 bootstrap reps to be executed and run `Prep_FSC_reps_of_bootreps.sh` to generate 50 fsc replicates of each bootstrap replicate.
+8. Prep parametric bootstrap replicates. `Par_conv_FSC_Larix.R` from previous step generates input for bootstraps. Go into the directory that contains each of the 100 bootstrap reps to be executed and run `Prep_FSC_reps_of_bootreps.sh` to generate 50 fsc replicates of each bootstrap replicate:
 
 ```
-cd /project/inbreh/turck_fsc/boot_inputs/31k_AncMCoInK3_maxL
-../../Prep_FSC_reps_of_bootreps.sh
+cd /project/inbreh/larix_turck/boot_inputs/AncMCRMCExp_maxL
+Prep_FSC_reps_of_bootreps.sh
 ```
 
-This is because we want to run 50 independent FSC searches for the best likelihood for each of the 100 bootstrap replicates. The replicates are created in a new directory in the parent of the current directory. Use `FSC_Larix_boot.slurm `to run FSC on these reps.
+This is because we want to run 50 independent FSC searches for the best likelihood for each of the 100 bootstrap replicates. The replicates are created in a new directory in the parent of the current directory.
 
-9. Summarize bootstrap replicates. For each bootstrap replicate, need to get the best of the runs, pull the bestlhoods file out, and then summarize these all together. `Get_best_FSCacross_boots.sh` will get the best run within each bootstrap rep - this should be run from within the `Reps` directory for the bootstraps. Run the R script `Get_Larix_pars_across_bootreps.R` on files in the `best_L_allMods` directory created by the previous script.
+
+9. Use `FSC_Larix_boot.slurm `to run FSC on these reps.
+
+
+10. Summarize bootstrap replicates. For each bootstrap replicate, need to get the best of the runs, pull the bestlhoods file out, and then summarize these all together. `Get_best_FSCacross_boots.sh` will get the best run within each bootstrap rep - this should be run from within the `Reps` directory for the bootstraps. Run the R script `Get_Larix_pars_across_bootreps.R` on files in the `best_L_allMods` directory created by the previous script.
+
+
+
+
+
+
+
 
 
 
 ## NOTE: I think there are other times that aren't being converted - times for when ancient migration ends, possibly others - need to find these 
+
 
 
 Population designations:
